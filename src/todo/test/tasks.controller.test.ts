@@ -44,9 +44,13 @@ describe.only('TasksController', () => {
     (require('assert')).ok(result instanceof Task);
   });
 
-  it.only('should delete a task', () => {
+  it.only('should delete a task', async () => {
     const task = taskService.createTask('Task 1', 'This is task 1');
-    tasksController.deleteTask(task.id);
-    (require('assert')).ok(!taskService.findAllTasks().includes(task));
+    taskService.deleteTask = async (id) => { // mock the deleteTask method
+      taskService.tasks = taskService.tasks.filter((t) => t.id!== id);
+    };
+    const result = await tasksController.delete(task.id);
+    (require('assert')).ok(result === `Task with id ${task.id} deleted successfully`);
+    (require('assert')).ok(!taskService.tasks.includes(task));
   });
 });

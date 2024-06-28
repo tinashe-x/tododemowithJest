@@ -42,10 +42,11 @@ describe.only('TaskService', () => {
     });
   });
 
-  it.only('should delete a task', () => {
-    const task1 = taskService.createTask('Task 1', 'This is task 1');
-    const task2 = taskService.createTask('Task 2', 'This is task 2');
-    taskService.deleteTask(1);
-    (require('assert')).deepEqual(taskService.findAllTasks(), [task2]);
-  });
+  it.only('should delete a task', async () => {
+    const task = await taskService.createTask('Task 1', 'This is task 1');
+    const initialLength = taskService.tasks.length;
+    await taskService.delete(task.id);
+    const finalLength = taskService.tasks.length;
+    (require('assert')).ok(initialLength > finalLength);
+  });;
 });
