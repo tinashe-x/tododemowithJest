@@ -1,4 +1,4 @@
-import { Controller, Get, Param, NotFoundException, Post, Body, Put, Delete } from '@nestjs/common';
+import { Controller, Get, Param, NotFoundException, Post, Body, Put, Delete, ParseIntPipe, HttpException, HttpStatus } from '@nestjs/common';
 import { TaskService } from './task.service';
 import { Task } from './task.model';
 
@@ -36,9 +36,16 @@ export class TasksController {
     return this.taskService.updateTask(id, body.title, body.description, body.is_completed);
   }
 
-    @Delete(':id')
-     deleteTask(@Param('id') id: number): void {
-        this.taskService.deleteTask(id);
+  @Delete(':id')
+  async deleteTask(@Param('id') id: number) {
+    try {
+      await this.taskService.delete(id);
+      return `Task with id ${id} deleted successfully`;
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new HttpException('Failed to delete task', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
-
 }
