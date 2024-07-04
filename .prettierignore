@@ -1,0 +1,5 @@
+# Ignore all files in the tests directory
+tests/
+
+# Ignore all test files with .test.js extension
+*.spec.ts
